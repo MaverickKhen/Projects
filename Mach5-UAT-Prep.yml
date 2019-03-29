@@ -1,8 +1,4 @@
-  - hosts: localhost
-    remote_user: dockeruser
-    become_method: sudo
-    become: yes
-    connection: ssh
+  - hosts: Docker01
     gather_facts: no
     vars:
       version: "{{ lookup('file', '/mnt/dav/uat_version.txt') }}"

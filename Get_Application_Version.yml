@@ -13,4 +13,4 @@
     tags: get-apt
     
   - debug:
-    msg: "{{ shooow.results | map(attribute='stdout_lines') | list }}"
+     msg: "{{ shooow.results | map(attribute='stdout_lines') | list }}"

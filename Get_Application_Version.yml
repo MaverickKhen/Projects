@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  tasks:
+  - name: Get installed Application Versions.
+    shell: "apt policy {{ item }} | head -n 3"
+    with_items:
+      - google-chrome-stable
+      - chromium-browser
+      - skypeforlinux
+      - flashplugin-installer
+    register: shooow
+    tags: get-apt
+    
+  - debug:
+    msg: "{{ shooow.results | map(attribute='stdout_lines') | list }}"

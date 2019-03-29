@@ -1,7 +1,5 @@
-- hosts: dock
+- hosts: Docker01
   gather_facts: no
-  become: yes
-  become_method: sudo
   #vars:
   #  version: "{{ lookup('file', '/mnt/dav/uat_version.txt') }}"
 

@@ -1,53 +1,53 @@
-  - hosts: Docker01
-    gather_facts: no
-    #vars:
-    #  version: "{{ lookup('file', '/mnt/dav/uat_version.txt') }}"
+- hosts: Docker01
+  gather_facts: no
+  #vars:
+  #  version: "{{ lookup('file', '/mnt/dav/uat_version.txt') }}"
 
-    tasks:
-    
-    - name: get contents of file
-      command: cat /mnt/dav/uat_version.txt
-      register: version
-    
-    - debug: 
-      msg: "The current build of UAT MACH05 bookmaking app is {{ version.content }}"
-    
-    - name: Prep new build by copying to /tmp
-      copy: 
-        src: /mnt/dav/{{ version.stdout }} 
-        dest: /tmp
+  tasks:
+  
+  - name: get contents of file
+    command: cat /mnt/dav/uat_version.txt
+    register: version
+  
+  - debug: 
+    msg: "The current build of UAT MACH05 bookmaking app is {{ version.stdout_lines }}"
+  
+  - name: Prep new build by copying to /tmp
+    copy: 
+      src: /mnt/dav/{{ version.stdout_lines }} 
+      dest: /tmp
 
-    - name: Unzip latest build of MACH05 UAT Bookmaking App
-      unarchive:
-        src: /tmp/"{{ version.stdout }}"/dashboard-client.zip 
-        dest: /tmp/"{{ version.stdout }}"
+  - name: Unzip latest build of MACH05 UAT Bookmaking App
+    unarchive:
+      src: /tmp/"{{ version.stdout }}"/dashboard-client.zip 
+      dest: /tmp/"{{ version.stdout }}"
 
-    - name: Create logs directory if does not exist
-      file:
-        path: /tmp/{{ version.stdout }}/dashboard-client/logs
-        state: directory
-        mode: 0777
+  - name: Create logs directory if does not exist
+    file:
+      path: /tmp/{{ version.stdout }}/dashboard-client/logs
+      state: directory
+      mode: 0777
 
-    - name: Editing StartDashboardClient file
-      replace: dest=/tmp/"{{ version.stdout }}"/dashboard-client/StartDashboardClient.sh regexp='^java -Xms400m -Xmx1024m -Dsun.java2d.xrender=false -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT-4 -jar bookmaking-ui.jar pause$' replace='java -Xms400m -Xmx1024m -Dsun.java2d.xrender=false -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT-4 -Duser.name=$HOSTNAME-$USER -jar bookmaking-ui.jar pause'    
+  - name: Editing StartDashboardClient file
+    replace: dest=/tmp/"{{ version.stdout }}"/dashboard-client/StartDashboardClient.sh regexp='^java -Xms400m -Xmx1024m -Dsun.java2d.xrender=false -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT-4 -jar bookmaking-ui.jar pause$' replace='java -Xms400m -Xmx1024m -Dsun.java2d.xrender=false -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT-4 -Duser.name=$HOSTNAME-$USER -jar bookmaking-ui.jar pause'    
 
-    - name: Add executable bit to StartDashboardClient.sh file
-      file:
-        path: /tmp/"{{ version.stdout }}"/dashboard-client/StartDashboardClient.sh
-        mode: "ugo+x"
+  - name: Add executable bit to StartDashboardClient.sh file
+    file:
+      path: /tmp/"{{ version.stdout }}"/dashboard-client/StartDashboardClient.sh
+      mode: "ugo+x"
 
-    - name: remove the .sh ext StartDashboardClient.sh file
-      command: mv /tmp/{{ version.stdout }}/dashboard-client/StartDashboardClient.sh /tmp/{{ version.stdout }}/dashboard-client/StartDashboardClient
+  - name: remove the .sh ext StartDashboardClient.sh file
+    command: mv /tmp/{{ version.stdout }}/dashboard-client/StartDashboardClient.sh /tmp/{{ version.stdout }}/dashboard-client/StartDashboardClient
 
-    - name: Rename dashboard-client directory before compressing
-      command: mv /tmp/{{ version.content }}/dashboard-client /tmp/{{ version.content }}/dashboard-client-{{ version.content }} 
+  - name: Rename dashboard-client directory before compressing
+    command: mv /tmp/{{ version.stdout_lines }}/dashboard-client /tmp/{{ version.stdout_lines }}/dashboard-client-{{ version.stdout_lines }} 
 
-    - name: Compress latest build of UAT MACH 05 bookmaking app 
-      archive:
-        path: /tmp/{{ version.content }}/dashboard-client-{{ version.content }}
-        dest: /tmp/dashboard-client-{{ version.content }}.tar.gz
-   
-      register: latest_build
+  - name: Compress latest build of UAT MACH 05 bookmaking app 
+    archive:
+      path: /tmp/{{ version.stdout_lines }}/dashboard-client-{{ version.stdout_lines }}
+      dest: /tmp/dashboard-client-{{ version.stdout_lines }}.tar.gz
+ 
+    register: latest_build
 
-    - debug:
-        msg: "{{ latest_build.dest }}"
+  - debug:
+      msg: "{{ latest_build.dest }}"

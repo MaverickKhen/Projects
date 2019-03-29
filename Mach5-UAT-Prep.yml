@@ -10,7 +10,7 @@
       register: version
     
     - debug: 
-        msg: "The current build of UAT MACH05 bookmaking app is {{ version.content }}"
+      msg: "The current build of UAT MACH05 bookmaking app is {{ version.content }}"
     
     - name: Prep new build by copying to /tmp
       copy: 

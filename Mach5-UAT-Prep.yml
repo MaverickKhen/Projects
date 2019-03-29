@@ -6,7 +6,7 @@
     tasks:
     
     - slurp:
-        path: '/mnt/dav/uat_version.txt.
+        path: '/mnt/dav/uat_version.txt.'
         register: version
     
     - debug: 
